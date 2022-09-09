@@ -40,6 +40,7 @@ app.route('/cards', cors())
 			con.release();
 		});
 	})
+	// this post /cards is for new cards created
 	.post(function postCards(req, res) {
 		var title = req.body.title;
 		var addCard = "INSERT INTO cards(title) VALUES (?)";
@@ -61,22 +62,7 @@ app.route('/cards', cors())
 		res.send('putted new cards');
 		console.log('working');
 	})
-	.delete(function deleteCards(req, res) {
-		var id = req.body.id;
-		var deleteRecord = "DELETE FROM cards where id = (?)";
-
-		res.statusCode = 200;
-		res.setHeader('Content-Type', 'text/plain');
-		
-		getConnection(function(err, con){
-			if (err) throw err;
-			con.query(deleteRecord, id, function(err, result, fields){
-				if(err) throw err;
-				res.send(result);
-			});
-			con.release();
-		});
-	})
+	
 
 // tasks queries, get, post, delete and put for updating the tasks
 
@@ -146,6 +132,23 @@ app.route('/cards/:id')
 		getConnection(function(err, con){
 			if (err) throw err;
 			con.query(cardByID, id, function(err, result, fields){
+				if (err) throw err;
+				res.send(result);
+			});
+			con.release();
+		});
+	})
+	// creating a delete request here for better response at front end
+	.delete(function deleteCard(req, res){
+		var id = req.params.id;
+		var deletedCard = "DELETE FROM cards where id = ?";
+
+		res.statusCode = 200;
+		res.setHeader('Content-Type', 'text/plain');
+
+		getConnection(function(err, con){
+			if(err) throw err;
+			con.query(deletedCard, id, function(err, result, fields){
 				if (err) throw err;
 				res.send(result);
 			});
